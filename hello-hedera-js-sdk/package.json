@@ -1,0 +1,26 @@
+{
+  "name": "hello-hedera-js-sdk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pheeling/FairPaperPublishingValueDistribution.git"
+  },
+  "keywords": [
+    "hedera"
+  ],
+  "author": "phili",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pheeling/FairPaperPublishingValueDistribution/issues"
+  },
+  "homepage": "https://github.com/pheeling/FairPaperPublishingValueDistribution#readme",
+  "dependencies": {
+    "@hashgraph/sdk": "^2.16.6",
+    "dotenv": "^16.0.1"
+  }
+}
