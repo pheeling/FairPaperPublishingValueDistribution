@@ -1,0 +1,2 @@
+run the app:
+     > SET DEBUG=fairpaperpublish:* & npm start
