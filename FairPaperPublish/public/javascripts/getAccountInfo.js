@@ -1,7 +1,7 @@
-const { Client } = require("@hashgraph/sdk");
+const { Client, AccountInfoQuery } = require("@hashgraph/sdk");
 require("dotenv").config();
 
-async function main() {
+async function getAccountInfo() {
 
     //Grab your Hedera testnet account ID and private key from your .env file
     const myAccountId = process.env.MY_ACCOUNT_ID;
@@ -18,5 +18,16 @@ async function main() {
     const client = Client.forTestnet();
 
     client.setOperator(myAccountId, myPrivateKey);
+
+    //Create the account info query
+    const query = new AccountInfoQuery()
+    .setAccountId(myAccountId);
+
+    //Sign with client operator private key and submit the query to a Hedera network
+    const accountInfo = await query.execute(client);
+
+    //Print the account info to the console
+    console.log(accountInfo);
 }
-main();
+
+module.exports = { getAccountInfo}
