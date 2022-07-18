@@ -27,6 +27,9 @@ app.use('/foundation/fund', hederaRouter);
 app.use('/foundation/search', hederaRouter);
 app.use('/foundation/upload', hederaRouter);
 app.use('/foundation/getAccountInfo', hederaRouter);
+app.use('/foundation/createAccounts', hederaRouter);
+app.use('/foundation/executeNFTTokenCreationForTreasury', hederaRouter);
+app.use('/foundation/getAccountBalanceTreasury', hederaRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

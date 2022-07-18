@@ -9,5 +9,23 @@ block content
       fetch(pathname + "/getAccountInfo")
     }
 
+    function createAccounts(){
+      var pathname = window.location.pathname;
+      fetch(pathname + "/createAccounts")
+    }
+
+    function executeNFTTokenCreationForTreasury(){
+      var pathname = window.location.pathname;
+      fetch(pathname + "/executeNFTTokenCreationForTreasury")
+    }
+
+    function getAccountBalanceTreasury(){
+      var pathname = window.location.pathname;
+      fetch(pathname + "/getAccountBalanceTreasury")
+    }
+
   div.body#dynamicContent
     button(type="button" name="getAccountInfo" onclick="getAccountInfo();") Get Account Info
+    button(type="button" name="createAccounts" onclick="createAccounts();") Create Account
+    button(type="button" name="executeNFTTokenCreationForTreasury" onclick="executeNFTTokenCreationForTreasury();") Create NFT
+    button(type="button" name="getAccountBalanceTreasury" onclick="getAccountBalanceTreasury();") Get Treasury Account Balance

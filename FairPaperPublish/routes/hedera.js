@@ -2,7 +2,8 @@ var express = require('express');
 var router = express.Router();
 
 // custom hedera modules
-var hederaAccount = require('../public/javascripts/getAccountInfo');
+var hederaAccount = require('../public/javascripts/AccountsFunctions');
+var hederaToken = require('../public/javascripts/TokenFunctions');
 
 /* GET main foundation site. */
 router.get('/', function(req, res, next) {
@@ -30,7 +31,22 @@ router.get('/getAccountInfo', function(req, res, next) {
   });
 });
 
+router.get('/createAccounts', function(req, res, next) {
+  hederaAccount.createAccounts().then(response => {
+    res.render('foundation', { title: 'Hedera Account creation' });
+  });
+});
 
+router.get('/executeNFTTokenCreationForTreasury', function(req, res, next) {
+  hederaToken.executeNFTTokenCreationForTreasury().then(response => {
+    res.render('foundation', { title: 'Hedera NFT creation' });
+  });
+});
 
+router.get('/getAccountBalanceTreasury', function(req, res, next) {
+  hederaAccount.getAccountBalanceTreasury().then(response => {
+    res.render('foundation', { title: 'Hedera Account Balance' });
+  });
+});
 
 module.exports = router;
