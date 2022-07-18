@@ -6,3 +6,33 @@ body {
 a {
   color: #00B7FF;
 }
+
+p {
+  color: #00000077;
+  padding: 12px;
+  line-height: auto;
+  line-break: auto;
+}
+
+button, input[type=submit] {
+  border: #00000077;
+  cursor: pointer;
+  border-radius: 20px;
+  width: 250px;
+  background: #f2f2f2;
+  padding: 12px;
+  color: #00000077;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-size: medium;
+  width: auto;
+  height: auto;
+  margin: 3px;
+}
+
+button:hover{
+  background-color:rgb(195, 236, 198);
+}
+
+button:focus{
+  background-color:rgb(255, 140, 0);
+}

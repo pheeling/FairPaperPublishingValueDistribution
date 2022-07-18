@@ -10,6 +10,10 @@ const {
 	TransferTransaction,
 	AccountBalanceQuery,
 	TokenAssociateTransaction,
+    TokenInfoQuery,
+    TokenFeeScheduleUpdateTransaction,
+    CustomFixedFee,
+    TransactionResponse
 } = require("@hashgraph/sdk");
 const fs = require('fs');
 const util = require('util');
@@ -17,6 +21,7 @@ const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 const appendFile = util.promisify(fs.appendFile);
 const filepathTreasuryNFT = 'log/tokenIdTreasuryNFT.txt'
+const filepathTreasuryPaymentToken = 'log/tokenIdTreasuryPaymentToken.txt'
 
 // Configure accounts and client, and generate needed keys
 const operatorId = AccountId.fromString(process.env.OPERATOR_ID);
@@ -25,15 +30,26 @@ const treasuryId = AccountId.fromString(process.env.TREASURY_ID);
 const treasuryKey = PrivateKey.fromString(process.env.TREASURY_PVKEY);
 const bobId = AccountId.fromString(process.env.BOB_ID);
 const bobKey = PrivateKey.fromString(process.env.BOB_PVKEY);
+const bobsNFT = '0.0.47703603'
 const client = Client.forTestnet().setOperator(operatorId, operatorKey);
 const supplyKey = PrivateKey.generate();
 
+const appendDataToFile = async (path, data) => {
+    await appendFile(path, data)
+    console.log("successfully added " + data)
+}
+
+function getContentsEnergyProduction() {
+    try {
+      return readFile(filepathMessageId, 'utf8');
+    }
+    catch (err){
+      console.log(err)
+    }
+}
+
 async function executeNFTTokenCreationForTreasury(ownerId, ownerPvKey){
     try{
-        const appendDataToFile = async (path, data) => {
-            await appendFile(path, data)
-            console.log("successfully added " + data)
-        }
         //Create the NFT
         tokenId = await this.createNFT()
 
@@ -50,6 +66,28 @@ async function executeNFTTokenCreationForTreasury(ownerId, ownerPvKey){
 
         //Associate token to User
         await associateNFT(tokenId, ownerId, ownerPvKey)
+    } catch (e){
+        console.log(e)
+    }  
+}
+
+async function createDailySupply(){
+    try{
+        //read filepathTreasuryPaymentToken file get tokenID
+        tokenId = await readFile(filepathTreasuryPaymentToken, 'utf8');
+        cleanedTokenId = tokenId.replace(/(\r\n|\n|\r)/gm, "")
+        //check for supply if not zero create more if maxSupply throw error.
+        tokenSupply = await getTokenInfo(cleanedTokenId)
+
+        if (tokenSupply < 0 ||
+            tokenSupply == null) {
+            throw new Error("Supply not given. Check Token");
+        }
+        //create dailySupply
+        await mintSupply(cleanedTokenId)
+
+        //check for new supply
+        tokenSupply = await getTokenInfo(cleanedTokenId)
     } catch (e){
         console.log(e)
     }  
@@ -173,6 +211,28 @@ async function mintNFT(tokenId){
     console.log(`- Created NFT ${tokenId} with serial: ${mintRx.serials[0].low} \n`);
 }
 
+async function mintSupply(tokenId){
+    //Mint another 1,000 tokens and freeze the unsigned transaction for manual signing
+    const transaction = await new TokenMintTransaction()
+         .setTokenId(tokenId)
+         .setAmount(5000)
+         .freezeWith(client);
+
+    //Sign with the supply private key of the token 
+    const signTx = await transaction.sign(supplyKey);
+
+    //Submit the transaction to a Hedera network    
+    const txResponse = await signTx.execute(client);
+
+    //Request the receipt of the transaction
+    const receipt = await txResponse.getReceipt(client);
+
+    //Get the transaction consensus status
+    const transactionStatus = receipt.status;
+
+    console.log("The transaction consensus status " +transactionStatus.toString());
+}
+
 async function associateNFT(tokenId, ownerId, ownerPvKey){
     //Create the associate transaction and sign with Alice's key 
     let associateTx = await new TokenAssociateTransaction()
@@ -221,11 +281,7 @@ async function transferNFT(tokenId, ownerId){
     console.log(`- `+ownerId+` balance: ${balanceCheckTx.tokens._map.get(tokenId.toString())} NFTs of ID ${tokenId}`);
 }
 
-//TODO: Fungible Token Creation
-//Freezing, how to unfreeze?
-
 async function createFungibleToken() {
-	//CREATE FUNGIBLE TOKEN (STABLECOIN)
 	let tokenCreateTx = await new TokenCreateTransaction()
         .setTokenName("efferoPay")
         .setTokenSymbol("EPP")
@@ -237,6 +293,7 @@ async function createFungibleToken() {
 		.setSupplyType(TokenSupplyType.Finite)
 		.setSupplyKey(operatorKey)
         .setFreezeKey(operatorKey)
+        .setFeeScheduleKey(operatorKey)
 		.freezeWith(client);
 
 	let tokenCreateSign = await tokenCreateTx.sign(treasuryKey);
@@ -244,6 +301,93 @@ async function createFungibleToken() {
 	let tokenCreateRx = await tokenCreateSubmit.getReceipt(client);
 	let tokenId = tokenCreateRx.tokenId;
 	console.log(`- Created token with ID: ${tokenId} \n`);
+
+    await appendDataToFile(filepathTreasuryPaymentToken, 
+        tokenId + "\r\n")
+          .catch(err => {
+          console.log(`Error Occurs, 
+          Error code -> ${err.code}, 
+          Error NO -> ${err.errno}`)
+    })
 }
 
-module.exports = { createNFT, mintNFT, associateNFT, transferNFT, executeNFTTokenCreationForTreasury, createFungibleToken}
+async function getTokenInfo(tokenId){
+    //Create the query
+    const query = new TokenInfoQuery()
+    .setTokenId(tokenId);
+
+    //Sign with the client operator private key, submit the query to the network and get the token supply
+    const tokenSupply = (await query.execute(client)).totalSupply;
+
+    console.log("The total supply of "+tokenId+" is " +tokenSupply);
+    return tokenSupply
+}
+
+async function setNewCustomFixedFee(amount,tokenIdNFT){
+
+    //read filepathTreasuryPaymentToken file get tokenID
+    tokenId = await readFile(filepathTreasuryPaymentToken, 'utf8');
+    cleanedTokenId = tokenId.replace(/(\r\n|\n|\r)/gm, "")
+
+    customFee = await new CustomFixedFee()
+        .setAmount(amount) // 1 token is transferred to the fee collecting account each time this token is transferred
+        .setDenominatingTokenId(cleanedTokenId) // The token to charge the fee in
+        .setFeeCollectorAccountId(treasuryId); // 1 token is sent to this account everytime it is transferred
+
+    //Create the transaction and freeze for manual signing
+    const transaction = await new TokenFeeScheudleUpdateTransaction()
+    .setTokenId(tokenIdNFT)
+    .setCustomFees(customFee)
+    .freezeWith(client);
+
+    //Sign the transaction with the fee schedule key
+    const signTx = await transaction.sign(operatorKey);
+
+    //Submit the signed transaction to a Hedera network
+    const txResponse = await signTx.execute(client);
+
+    //Request the receipt of the transaction
+    const receipt = await txResponse.getReceipt(client);
+
+    //Get the transaction consensus status
+    const transactionStatus = receipt.status.toString();
+
+    console.log("The transaction consensus status is " +transactionStatus);
+}
+
+//TODO Freezing doesn't work to update custom fee. FreezeWith Client is missing
+async function setNewCustomFixedFee(){
+    try{
+    //read filepathTreasuryPaymentToken file get tokenID
+    tokenId = await readFile(filepathTreasuryPaymentToken, 'utf8');
+    cleanedTokenId = tokenId.replace(/(\r\n|\n|\r)/gm, "")
+
+    let customFee = await new CustomFixedFee()
+        .setAmount(10000) // 100 token is transferred to the fee collecting account each time this token is transferred
+        .setDenominatingTokenId(cleanedTokenId) // The token to charge the fee in
+        .setFeeCollectorAccountId(treasuryId); // 100 token is sent to this account everytime it is transferred
+
+    //Create the transaction and freeze for manual signing
+    const transaction = await new TokenFeeScheduleUpdateTransaction()
+        .setTokenId(bobsNFT)
+        .setCustomFees(customFee);
+
+    //Sign the transaction with the fee schedule key
+    const signTx = await transaction.sign(operatorKey);
+
+    //Submit the signed transaction to a Hedera network
+    const txResponse = await signTx.execute(client);
+
+    //Request the receipt of the transaction
+    const receipt = await txResponse.getReceipt(client);
+
+    //Get the transaction consensus status
+    const transactionStatus = receipt.status.toString();
+
+    console.log("The transaction consensus status is " +transactionStatus);
+    } catch(e){
+        console.log(e)
+    }
+}
+
+module.exports = { createNFT, mintNFT, associateNFT, transferNFT, executeNFTTokenCreationForTreasury, createFungibleToken, mintSupply, createDailySupply, setNewCustomFixedFee}

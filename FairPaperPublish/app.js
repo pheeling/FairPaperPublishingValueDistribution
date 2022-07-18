@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var favicon = require('serve-favicon');
 
 var hederaRouter = require('./routes/hedera');
 var indexRouter = require('./routes/index');
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(favicon(path.join(__dirname,'public','images','favicon.ico')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -30,6 +32,9 @@ app.use('/foundation/getAccountInfo', hederaRouter);
 app.use('/foundation/createAccounts', hederaRouter);
 app.use('/foundation/executeNFTTokenCreationForTreasury', hederaRouter);
 app.use('/foundation/getAccountBalanceTreasury', hederaRouter);
+app.use('/foundation/createDailySupply', hederaRouter);
+app.use('/foundation/createFungibleToken', hederaRouter);
+app.use('/foundation/setNewCustomFixedFee', hederaRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

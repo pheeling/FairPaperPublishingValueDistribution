@@ -49,4 +49,23 @@ router.get('/getAccountBalanceTreasury', function(req, res, next) {
   });
 });
 
+router.get('/createDailySupply', function(req, res, next) {
+  hederaToken.createDailySupply().then(response => {
+    res.render('foundation', { title: 'Hedera mint Daily Supply' });
+  });
+});
+
+router.get('/createFungibleToken', function(req, res, next) {
+  hederaToken.createFungibleToken().then(response => {
+    res.render('foundation', { title: 'Hedera create fungible Token' });
+  });
+});
+
+router.get('/setNewCustomFixedFee', function(req, res, next) {
+  hederaToken.setNewCustomFixedFee().then(response => {
+    res.render('foundation', { title: 'Hedera set custom fixed Fee' });
+  });
+});
+
+
 module.exports = router;

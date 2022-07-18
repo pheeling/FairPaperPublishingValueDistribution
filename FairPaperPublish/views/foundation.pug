@@ -24,8 +24,31 @@ block content
       fetch(pathname + "/getAccountBalanceTreasury")
     }
 
+    function createDailySupply(){
+      var pathname = window.location.pathname;
+      fetch(pathname + "/createDailySupply")
+    }
+
+    function createFungibleToken(){
+      var pathname = window.location.pathname;
+      fetch(pathname + "/createFungibleToken")
+    }
+
+    function setNewCustomFixedFee(){
+      var pathname = window.location.pathname;
+      fetch(pathname + "/setNewCustomFixedFee")
+    }
+
   div.body#dynamicContent
-    button(type="button" name="getAccountInfo" onclick="getAccountInfo();") Get Account Info
-    button(type="button" name="createAccounts" onclick="createAccounts();") Create Account
+    button(type="button" name="getAccountInfo" onclick="getAccountInfo();") Get account info
+    button(type="button" name="createAccounts" onclick="createAccounts();") Create account
     button(type="button" name="executeNFTTokenCreationForTreasury" onclick="executeNFTTokenCreationForTreasury();") Create NFT
-    button(type="button" name="getAccountBalanceTreasury" onclick="getAccountBalanceTreasury();") Get Treasury Account Balance
+    button(type="button" name="getAccountBalanceTreasury" onclick="getAccountBalanceTreasury();") Get treasury account balance
+    button(type="button" name="createFungibleToken" onclick="createFungibleToken();") Create fungible Token
+    button(type="button" name="createDailySupply" onclick="createDailySupply();") Create daily supply
+
+    p doesn't work. freeze function N/A
+    button(type="button" name="setNewCustomFixedFee" onclick="setNewCustomFixedFee();") Set a new fee for created NFT
+
+    
+  
