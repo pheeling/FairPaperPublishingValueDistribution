@@ -19,7 +19,7 @@ async function saveFile(file){
         .update(file.name)
         .digest('hex')
 
-        uploadPath = process.cwd + '/media/files/' + file.name+"_"+filehash+"_"+Date.now();
+        uploadPath = process.cwd() + '/media/files/' + file.name+"_"+filehash+"_"+Date.now();
         file.mv(uploadPath, function(err){
             if(err){
                 return err
@@ -48,4 +48,19 @@ async function saveMetaData(file,filehash){
 
 }
 
-module.exports = { saveFile }
+function contentLister(){
+    try {
+        return readFile(filePathLibrary, 'utf8');
+      }
+      catch (err){
+        console.log(err)
+      }
+}
+
+async function readFolderContents(){
+    contents = await contentLister()
+    console.log(contents)
+    return contents
+}
+
+module.exports = { saveFile, readFolderContents }

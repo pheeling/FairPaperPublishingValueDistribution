@@ -2,3 +2,22 @@ extends layout
 
 block content
   p #{title}
+
+  p#dataField #{dataField} results
+
+  script.
+    var pTag = document.getElementById("dataField");
+
+    function getData(){
+      var pathname = window.location.pathname;
+      fetch(pathname + "/search")
+      .then(response => {
+        return response.text()
+      }).then(
+        data => {
+        pTag.innerHTML = data
+      })
+    }
+  
+  div.body#dynamicContent
+    button(type="button" name="getData" onclick="getData();") Get library Content

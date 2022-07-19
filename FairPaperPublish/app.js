@@ -7,6 +7,7 @@ var favicon = require('serve-favicon');
 var fileUpload = require('express-fileupload');
 
 var uploadRouter = require('./routes/fileUpload');
+var libraryRouter = require('./routes/library');
 var hederaRouter = require('./routes/hedera');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -29,7 +30,6 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/foundation', hederaRouter);
 app.use('/foundation/fund', hederaRouter);
-app.use('/foundation/search', hederaRouter);
 app.use('/foundation/getAccountInfo', hederaRouter);
 app.use('/foundation/createAccounts', hederaRouter);
 app.use('/foundation/executeNFTTokenCreationForTreasury', hederaRouter);
@@ -39,6 +39,8 @@ app.use('/foundation/createFungibleToken', hederaRouter);
 app.use('/foundation/setNewCustomFixedFee', hederaRouter);
 app.use('/uploadPapers', uploadRouter);
 app.use('/uploadPapers/upload', uploadRouter);
+app.use('/library', libraryRouter);
+app.use('/library/search', libraryRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
