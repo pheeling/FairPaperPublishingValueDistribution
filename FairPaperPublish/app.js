@@ -4,7 +4,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var favicon = require('serve-favicon');
+var fileUpload = require('express-fileupload');
 
+var uploadRouter = require('./routes/fileUpload');
 var hederaRouter = require('./routes/hedera');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -21,13 +23,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(favicon(path.join(__dirname,'public','images','favicon.ico')));
+app.use(fileUpload());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/foundation', hederaRouter);
 app.use('/foundation/fund', hederaRouter);
 app.use('/foundation/search', hederaRouter);
-app.use('/foundation/upload', hederaRouter);
 app.use('/foundation/getAccountInfo', hederaRouter);
 app.use('/foundation/createAccounts', hederaRouter);
 app.use('/foundation/executeNFTTokenCreationForTreasury', hederaRouter);
@@ -35,6 +37,8 @@ app.use('/foundation/getAccountBalanceTreasury', hederaRouter);
 app.use('/foundation/createDailySupply', hederaRouter);
 app.use('/foundation/createFungibleToken', hederaRouter);
 app.use('/foundation/setNewCustomFixedFee', hederaRouter);
+app.use('/uploadPapers', uploadRouter);
+app.use('/uploadPapers/upload', uploadRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

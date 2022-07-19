@@ -2,3 +2,10 @@ extends layout
 
 block content
   p #{title}
+
+  div.body#uploadForm
+    body
+      form(ref=uploadForm, id=uploadForm, action='/uploadPapers/upload', method='POST',encType="multipart/form-data")
+          input(type='file', name="fileUpload")
+          input(type='submit', value='Upload')
+

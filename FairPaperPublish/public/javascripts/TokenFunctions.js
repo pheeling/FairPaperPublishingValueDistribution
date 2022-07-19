@@ -39,15 +39,6 @@ const appendDataToFile = async (path, data) => {
     console.log("successfully added " + data)
 }
 
-function getContentsEnergyProduction() {
-    try {
-      return readFile(filepathMessageId, 'utf8');
-    }
-    catch (err){
-      console.log(err)
-    }
-}
-
 async function executeNFTTokenCreationForTreasury(ownerId, ownerPvKey){
     try{
         //Create the NFT
@@ -209,6 +200,32 @@ async function mintNFT(tokenId){
 
     //Log the serial number
     console.log(`- Created NFT ${tokenId} with serial: ${mintRx.serials[0].low} \n`);
+}
+
+async function mintNFT(tokenId,CID){
+    //IPFS content identifiers for which we will create a NFT
+    let mintInfo = []
+
+    // Mint new NFT
+    let mintTx = await new TokenMintTransaction()
+    	.setTokenId(tokenId)
+    	.setMetadata([Buffer.from(CID)])
+    	.freezeWith(client);
+
+    //Sign the transaction with the supply key
+    let mintTxSign = await mintTx.sign(supplyKey);
+
+    //Submit the transaction to a Hedera network
+    let mintTxSubmit = await mintTxSign.execute(client);
+
+    //Get the transaction receipt
+    let mintRx = await mintTxSubmit.getReceipt(client);
+
+    //Log the serial number
+    console.log(`- Created NFT ${tokenId} with serial: ${mintRx.serials[0].low} \n`);
+    mintInfo.push(tokenId+","+mintRx.serials[0].low)
+
+    return mintInfo
 }
 
 async function mintSupply(tokenId){

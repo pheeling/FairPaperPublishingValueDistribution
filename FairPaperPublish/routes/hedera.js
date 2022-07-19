@@ -20,11 +20,6 @@ router.get('/search', function(req, res, next) {
   res.render('searchPapers', { title: 'Discover new ideas' });
 });
 
-/* GET upload papers */
-router.get('/upload', function(req, res, next) {
-  res.render('uploadPapers', { title: 'Upload your documents' });
-});
-
 router.get('/getAccountInfo', function(req, res, next) {
   hederaAccount.getAccountInfo().then(response => {
     res.render('foundation', { title: 'Hedera Account Info' });
@@ -66,6 +61,5 @@ router.get('/setNewCustomFixedFee', function(req, res, next) {
     res.render('foundation', { title: 'Hedera set custom fixed Fee' });
   });
 });
-
 
 module.exports = router;
