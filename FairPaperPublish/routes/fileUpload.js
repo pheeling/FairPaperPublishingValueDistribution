@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 //load custom modules
-var fileHandling = require('../public/javascripts/FileHandling');
+var fileHandling = require('../public/javascripts/Files');
 
 /* GET main foundation site. */
 router.get('/', function(req, res, next) {
