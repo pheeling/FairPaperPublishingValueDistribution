@@ -1,12 +1,13 @@
 extends layout
 
 block content
-  p #{title}
-
-  p#dataField #{dataField} results
+  h1= title
+  p Welcome to #{title}
 
   script.
-    var pTag = document.getElementById("dataField");
+    //var pTag = document.getElementById("dynamicContent");
+
+    document.body.onload = getData;
 
     function getData(){
       var pathname = window.location.pathname;
@@ -15,9 +16,61 @@ block content
         return response.text()
       }).then(
         data => {
-        pTag.innerHTML = data
-      })
+          let array = []
+          array = data.split(",")
+          addElement(array[4])
+          var p = document.createElement('p'); 
+          var content = document.createTextNode(data)
+          p.appendChild(content)
+          var dynamicContentDiv = document.getElementById("dynamicContent");
+
+          dynamicContentDiv.insertBefore(p,dynamicContent.firstChild);
+          contactAuthor()
+        })   
     }
-  
+
+    function addElement(newlink) {      
+      // Create anchor element.
+      var a = document.createElement('a'); 
+
+      // Create the text node for anchor element.
+      var link = document.createTextNode("Proof "+newlink);
+
+      // Append the text node to anchor element.
+      a.appendChild(link); 
+
+      // Set the title.
+      a.title = "Hedera Explorer Link"; 
+
+      // Set the href property.
+      a.href = "https://testnet.dragonglass.me/hedera/search?q="+newlink; 
+
+      // Append the anchor element to the body.
+      var linkSectionDiv = document.getElementById("linkSection");
+      linkSectionDiv.appendChild(a);
+    }
+
+    function contactAuthor(){
+      	// Create anchor element.
+      var a = document.createElement('a'); 
+
+      // Create the text node for anchor element.
+      var link = document.createTextNode("Contact foundation for more info");
+
+      // Append the text node to anchor element.
+      a.appendChild(link); 
+
+      // Set the title.
+      a.title = "Mailto"; 
+
+      // Set the href property.
+      a.href = "mailto:someone@yoursite.com?subject=Mail from Our Site"; 
+
+      // Append the anchor element to the body.
+      var linkSectionDiv = document.getElementById("linkSection");
+      linkSectionDiv.appendChild(a);
+    }
+  br
   div.body#dynamicContent
-    button(type="button" name="getData" onclick="getData();") Get library Content
+
+    div.body#linkSection

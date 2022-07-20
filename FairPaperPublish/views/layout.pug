@@ -6,10 +6,11 @@ html
   body
     block content
 
-    div.body#navigation
-      a(href="/") Home
-      a(href="/foundation") Foundation
-      a(href="/foundation/fund") Fund Treasury
-      a(href="/library") Search for new Ideas
-      a(href="/uploadPapers") Upload your work
+    block foot
+      div.body#navigation
+        a#mainnav(href="/") Home
+        a#mainnav(href="/foundation") Foundation
+        a#mainnav(href="/foundation/fund") Fund Treasury
+        a#mainnav(href="/library") Search for new Ideas
+        a#mainnav(href="/uploadPapers") Upload your work
   

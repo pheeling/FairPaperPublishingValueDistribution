@@ -6,7 +6,7 @@ var fileHandling = require('../public/javascripts/Files');
 
 /* GET main library site. */
 router.get('/', function(req, res, next) {
-    res.render('searchPapers', { title: 'Working with the (companyName)', dataField: ""});
+    res.render('searchPapers', { title: 'Working with the (companyName)'});
 });
 
 /* get upload papers */

@@ -1,9 +1,10 @@
 extends layout
 
 block content
-  p #{title}
+  h1= title
+  p Welcome to #{title}
 
-  div.body#uploadForm
+  div.body#dynamicContent
     body
       form(ref=uploadForm, id=uploadForm, action='/uploadPapers/upload', method='POST',encType="multipart/form-data")
           input(type='file', name="fileUpload")
