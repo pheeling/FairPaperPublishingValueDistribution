@@ -16,7 +16,7 @@ async function saveFile(file){
     try{
         filehash = require('crypto')
         .createHash('sha256')
-        .update(file.name)
+        .update(file.name+file.size+file.mimetype)
         .digest('hex')
 
         uploadPath = process.cwd() + '/media/files/' + file.name+"_"+filehash+"_"+Date.now();
